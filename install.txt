@@ -1,8 +1,9 @@
-#----------rootİ’è
+https://blog.csdn.net/u012732259/article/details/70172704
+#----------rootè¨­å®š
 sudo passwd root
 root
 
-#----------docker“±“ü
+#----------dockerå°å…¥
 sudo apt-get update
 
 sudo apt-get install \
@@ -20,12 +21,12 @@ sudo apt-get update
 sudo apt-get install -y docker-ce
 
 docker version
-#-----------------------------------docker-compose“±“ü
+#-----------------------------------docker-composeå°å…¥
 curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 docker-compose version
 
-#---------------------IPİ’è
+#---------------------IPè¨­å®š
 vi /etc/netplan/50-cloud-init.yaml
 network:
     ethernets:
@@ -37,10 +38,10 @@ network:
     version: 2
 
 netplan apply
-#ÄÚ‘±
+#å†æ¥ç¶š
 ping www.google.com
 
-#--------------PC–¼‘O‚Ì•ÏX
+#--------------PCåå‰ã®å¤‰æ›´
 vi /etc/cloud/cloud.cfg
 preserve_hostname: true
 
@@ -53,7 +54,7 @@ EOF
 
 cat /etc/hosts
 
-#---------DNS•ÏX
+#---------DNSå¤‰æ›´
 vi /etc/systemd/resolved.conf
 DNS=192.168.11.1 #114.114.114.114
 
