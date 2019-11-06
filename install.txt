@@ -1,3 +1,6 @@
+https://blog.csdn.net/u010164190/article/details/80065555
+https://blog.csdn.net/mtgege/article/details/78462290
+https://www.jianshu.com/p/6a2cec8de3f1
 https://blog.csdn.net/u012732259/article/details/70172704
 #----------root設定
 sudo passwd root
