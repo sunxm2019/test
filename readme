@@ -1,6 +1,7 @@
 https://www.cnblogs.com/XJT2018/p/10229876.html
 https://github.com/z3ntu/QtWaitingSpinner
 https://stackoverflow.com/questions/3715493/encoding-an-image-file-with-base64
+https://www.cnblogs.com/gl1573/p/10129382.html
 
 with open("path/to/file.png", "rb") as f:
     data = f.read()
