@@ -1,3 +1,23 @@
+https://www.cnblogs.com/XJT2018/p/10229876.html
+https://github.com/z3ntu/QtWaitingSpinner
+
+def get_tray_icon(self):
+        base64_data = '''iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABHN
+                         CSVQICAgIfAhkiAAAAQNJREFUOI3t1M9KAlEcxfHPmP0xU6Ogo
+                         G0teoCiHjAIfIOIepvKRUE9R0G0KNApfy0c8hqKKUMrD9zVGc4
+                         9nPtlsgp5n6qSVSk7cBG8CJ6sEX63UEcXz4jE20YNPbygPy25Q
+                         o6oE+fEPXFF7A5yA9Eg2sQDcU3sJd6k89O4iiMcYKVol3rH2Mc
+                         a1meZ4hMdNPCIj+SjHHfFZU94/0Nwlv4rWoY7vhrdeLNoO86bG
+                         lym/ge3lsHDdI2fojbBG6sUtzOiQ1wQOwk6GwWKHeJyHtxOcFi
+                         0TpFaxmnhNcyIW45bQ6RS3Hq4MeB7Ltyahki9Gd2xidWiwG9va
+                         nCZqi7xlZGVHfwN6+5nU/ccBUYAAAAASUVORK5CYII='''
+
+        pm = Qg.QPixmap()
+        pm.loadFromData(base64.b64decode(base64_data))
+        i = Qg.QIcon()
+        i.addPixmap(pm)
+        return i
+
 http://www.jyguagua.com/?p=2615
 http://www.jyguagua.com/?p=2835
 https://blog.51cto.com/9291927/2423254
