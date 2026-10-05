@@ -199,5 +199,405 @@ https://pl.python.org/forum/index.php?topic=5707.0;wap2
 https://stackoverflow.com/questions/17697352/pyqt-implement-a-qabstracttablemodel-for-display-in-qtableview
 
 
+跳过导航
+9 个新项目
+
+
+
+
+
+VulkanRipper
+
+主页
+
+文章
+
+合集
+
+聊天
+
+会籍
+
+
+
+
+升级
+VulkanRipper software & manual
+创作者账户图片
+VulkanRipper
+9月13日
+
+
+22
+
+
+
+Note 1: You should understand the basics of 3D graphics and be able to use you favorite 3D editor
+
+Note 2: VulkanRipper only saves the data the game displays on the screen (sent to GPU). In other words, this data loaded in 3d editor is just another representation of what the game has shown you. But obviously, you must take the game’s license agreement into account
+
+Note 3: Software is FREE :
+
+https://github.com/tuslin/VulkanRipper/
+
+Showcase your work — Share shaded viewport screenshots.
+
+Give useful feedback — Report bugs or suggest features to help us improve the tool.
+
+Note 4: Unlike other rippers, Vulkan Ripper does not connect to the Internet, does not send your personal data, and does not require administrator privileges.
+
+Vulkan ripper itself presented by two files : wrapper - vulkan-1.dll and config - vk_config.xml
+
+Usually work can be divided into two steps:
+
+-> Step 1. Trial (first) rip. Determine scene parameters to automate final rip: projection matrix (post shader), check texture attribute index/name, unneeded textures (filter by name). Maybe define only meshes to rip (e.g. only some character meshes).
+
+-> Step 2. Final rip. Bind right textures to mesh. Make shading.
+
+Initial steps:
+
+Optional: Install the NVIDIA Texture Tools program if you want work with KTX2 files, download Notepad++ to edit vk_config.xml (links in software section)
+
+Copy “vulkan-1.dll” and “vk_config.xml” to the folder with the application. If you want rip DirectX games add files from DXVK_VKD3D folder.
+
+Run the game with the ripper, for the first time popup message will appear with the UID in the clipboard, press Ctrl+V to copy it and send it to the creator (via Direct Message) to get the activation_code. Fill the activation_code parameter in vk_config.xml and run game again now you can rip. Use menu, F11/F12/Printscreen buttons.
+
+Optional: Customize the configuration file vk_config.xml or use "runtime config" from ripper menu (see below).
+
+Thats all. If you are new to ripping process suggesting watch videos and look ripping notes. For example: https://www.patreon.com/posts/eden-emulator-144168155 or https://www.patreon.com/posts/surge-2-rip-140657460
+
+Tray menu.
+
+
+START RIP - obviously starts rip
+
+Rip w/o images - rips only meshes without images
+
+Rip mesh list - rips only meshes defined by mesh_list in vk_config.xml
+
+Dump all images - saves all loaded game images (rip without meshes)
+
+Dump all temporary images - saves all loaded temporary game images (vk_config.xml: bSaveTemporaryImages ="true")
+
+Open output folder - opens outfolder defined in config in explorer
+
+Runtime config - opens dialog box with vk_config.xml parameters that can be changed at runtime
+
+
+Config file (vk_config.xml) description - unleash the power of VulkanRipper
+
+
+outfolder – path to the folder where your rips and log will be saved, path will be created if it not exist. VulkanRipper log file - vklog.txt located in the outfolder.
+
+<TEXTURE SECTION> 
+
+bSimpleTextureFileNames - "true" if you want use sequantial numbers as filenames, in other case will consist initial image format and vulkan image descriptor handle.
+
+bReorderByRank  - if parameter is true textures will be sorted in order of appearence in meshes from lower to higher frequency of appearence(rank) in texture list (slots in NR). The aim of this feature is to shift more "individual" textures to the top of the texture list.
+
+bAutoTexCoords - if true, will try to determine which attributes are texture coordinates by checking attribute directly connected to the texture sampler (which is very rare)
+
+bTexCoordListInverseOrder  - if true, program reorders texture UVs from end to start. Usefull when you have limited texture UVs count (e.g. 8 in blender).
+
+bImageFilePNG - if true NVTT texture conversion script from KTX2 to PNG will be generated (convert2png.bat). Else images will be saved in BMP format, no nvtt required.
+
+nvtt_export_path – path to the directory where the application “nvtt_export.exe” is located
+
+bStartNvttAfterRip - if true, convert2png.bat will be executed after rip immediately.
+
+
+If you make sequence of rips or have low memory better if set it to false.
+
+discardTexSizeXLessOrEqual - images whose width is less than or equal to this value will not be saved
+
+discardTexSizeYLessOrEqual - images whose height is less than or equal to this value will not be saved
+
+gltf_material_variants_limit - material variants count limit (gltf output). In some ways gltf equivalent of texture slots in NR(see below).
+
+bHandleBindlessTextures — required for so-called "bindless" textures (Method 1) in cases where a mesh is associated with a vast number of textures that duplicate those of other meshes, or when the appropriate texture fails to display for a specific mesh.
+
+bDescriptorIndexingHint - enables descriptor indexing (method 2), required for so called "bindless" textures, use with texture_base_index_offset.
+
+texture_base_index_offset - index of the array with descriptor set bases that are passed to the shader for a specific mesh at runtime. Widely used with DirectX 12 (VKD3D). This array presented after RIP in mesh statistics tab (<STAT) in vklog.txt. If bDescriptorSetHint enabled VulkanRipper will bind textures from consts[texture_base_index_offset] to consts[texture_base_index_offset]+gltf_material_variants_limit to its mesh.
+
+
+Which index is the texture base you should determine yourself (probe). The algorithm as follows. Select distinct mesh, e.g. head/face/body/skydom, and rip only this mesh for all indices (0,1,2 in screenshot above). As a result you will get 3 set of textures for this mesh and only one of them will fit - the correct one.
+
+Example:
+
+Selecting the head mesh (0x46695363) and adding it to the "mesh rip list"
+
+Optionally you can use "Texture filter list" to rip only diffuse textures.
+
+Pressing "Rip mesh list (F8)" for indices 0,1,2.
+
+
+
+Now we have 3 sets of textures. Face texture have 2 sets, but full body set have only set with index 2, so it is the right one. Checking in blender.
+
+
+One can ask why there are not only head mesh we selected. The shader 0x46695363 which we selected process all body parts not only head.
+
+diftex_list - list of textute name filters, textures that do not meet the condition will not be saved and will not be binded to the mesh. If list is empty all textures will be saved. Example: diftex_list = "BC1_RGBA_SRGB,BC3_SRGB"
+
+
+bSaveTemporaryImages - preserve temporary images, usefull when the game uses megatextures (SVT). If this option enabled VR, will save these images (tiles) in memory , then you can dump them via "Dump temporary images" menu. Move character (scene) freely to accumulate hi-res (all res) tiles. Note that in some wierd games, the amount of memory allocated may exceed 50 GB. In this case you can limit the memory usage with the "temporary_images_limit" parameter.
+
+temporary_images_limit - the size in MB (megabytes) to store temporary images.
+
+bSaveOnlyRectangularTemporaryImages -preserve only rectangular temporary images, usefull when saving megatexture tiles.
+
+The current temporary images size can be controlled via the "Temporary textures"
+
+
+Example of using bSaveTemporaryImages option to decompose megatextures (Hellblade 2):
+
+
+
+with bSaveTemporaryImages = "true"
+
+
+Another game (MGS Delta):
+
+
+<MESH SECTION> 
+
+bNRFormat  - if you want NR files output, else GLTF
+
+bSingleGltf - if true mesh output as single GLTF file, otherwise single file for every mesh. Every mesh option usefull to lookup particular mesh attribute layout and their names (if present) . Names can consist strings like "tex", "normal" etc, so you can easily automate your rip.
+
+bVertexPositionOnly - if you want only vertex position attributes saved
+
+bDiscardNonColorPasses - if you want to discard mesh drawing in non-color passes. Usefull if you want remove shadow meshes from rip, but should not be used when non-color pass is used for occlusion queries. Should set to "false" for PCSX2.
+
+bDiscardOrthoMesh  - do not save meshes transformed with orthographic projection matrix (w = 1), i.e menu elements, etc. When in preshader mode this parameter will be restored automatically to false. Should set to "false" for PCSX2.
+
+bDiscardOnlyPositionMesh - ignore meshes without other attributes except position.
+
+bDiscardMeshWithoutTextures - ignore meshes without textures.
+
+bAtomizeIndirectDraw - atomizes indirect draw call meshes, which is used in modern games with compute pipeline generated meshes ( Enshrouded, Great Circle, ...). E.g. one solid body mesh divided back to body parts.
+
+bForceCullingOff  - disables culling when it pipeline defined.
+
+bPreShader  - if you want untransformed meshes (before application of vertex shader). Feature known as T-Pose/A-Pose. Note: 3d models will in T-Pose/A-Pose if game send them to vertex shader in T-Pose/A-Pose, in other case the parts of body maybe fragmented and located in the center or transformed by game before vertex shader stage.
+
+bRawPreShader1 - Mesh can be passed to the vertex shader not only via input vertex attributes, but fetched from the shared buffers and 2D textures which is a common case when the compute shader involved in vertex processing. If option is enabled VR will accumulate variable of such alternative sources and store them as usual vertex attribs. bPreShader  also must be enabled.
+
+
+Between the "garbage" created by the shader temp variables, there are valid meshes, even with valid UV coordinates. Meshes represented as garbage in Blender can be valid meshes, just their position (xyzw) is not the first attribute, and can be meshes stored individually (packed, scaled, etc.).
+
+bConcatSubsequentVEC1DAttribs - if true concatinates subsequent one dimensional attributes into subsequent 2-dimensional vectors. Usefull to gain texture coordinates for Doom Eternal/ Great Circle
+
+bSplitVec4to2Vec2 - if true splits (except first/position) vec4 mesh attributes into 2 vec2. Useful for some game scenes like Wolfenstein 2.
+
+force_instances_no_more - limit draw instances count by value your defined, if equals 0 feature not used . Usefull to discard excesive meshes like snow , terrain , trees
+
+force_position_id_string - treat this string (exactly) as position attribute name in NR/GLTF files. Usefull in pre shader mode (t-pose) when position is not the first attribute.
+
+force_normal_id_string - treat this string (exactly) as normal attribute name in NR/GLTF files
+
+force_texcoord_id_string - if this string appear in attribute name it will be treated as texture coordinates in NR/GLTF files
+
+force_position_id - index of attribute which will be treated as position in NR/GLTF files (if force_position_id_string is not defined). Usefull in pre shader mode (t-pose) when position is not the first attribute.
+
+force_normal_id - index of attribute which will be treated as normal in NR/GLTF files (if force_normal_id_string is not defined)
+
+force_texcoord_id - index of attribute which will be treated as texture coordinates in NR/GLTF files (if force_texcoord_id_string is not defined)
+
+mesh_blacklist - list of vertex shader crc32 (see mesh naming). Meshes using these vertex shaders will be ignored when ripping. Example: mesh_blacklist = "0x12345, 0x6655444, 0x6666"
+
+mesh_riplist - list of vertex shader crc32 (see mesh naming). Only meshes that use these vertex shaders will be ripped. Example: mesh_riplist = "0x2e867ade,0x2ead5d04,0xe01dc62a,0xed7eeab7,0x2e867ade"
+
+
+bUnproject  - if you want unproject meshes by vulkanripper at runtime (by matrix or by FoV).
+
+bUserInverseMatrix - if you have inverse projection matrix and want apply it at a runtime. Else FoV parameters matrix will be applied.
+
+inv_proj_matrix  - inverse projection matrix
+
+sphere_index , sphere_radius, sphere_stride, sphere_replace_for_vs_crc  - sphere injection parameters for meshes unprojection (kids: for restoring flat meshes)
+
+Unprojection discussed in  https://www.patreon.com/posts/unproject-with-103555442
+
+UnprojectFoV  - FoV
+
+UnprojectNear - Near
+
+UnprojectFar  - Far
+
+UnprojectWidth  - screen width, if not defined, width from render pass info will be applied
+
+UnprojectHeigth  - screen height, if not defined, height from render pass info will be applied
+
+<SHADER SECTION> 
+
+bDumpShaderSource  - if you want save shader source
+
+bDumpOnlyVertexShaderSource - if you want save only vertex shader source
+
+<OTHER PARAMETERS> 
+
+bRCPS3TposeGLTFNormals  - if you want variable "in_normal" interpreted as normal while ripping RPCS3 preshader mode
+
+bForceRip - rip more then one frame (usefull with Yuzu/Eden emulator)
+
+force_rip_additional_frames - force rip additional frames count
+
+bPotatoPC - if your PC's RAM - CPU subsystem is slow (experimental)
+
+bForceDiscreteGPU - if true ripper will present only discrete GPUs for game
+
+bLogo - if you want disable vulkanripper logo.
+
+Mesh file naming
+
+Mesh file name consists of frame id (first digit), submit (id) after 's' character, render pass id (rp), framebuffer id (fb), vertex shader source CRC32 (starts with 0x), common mesh id (id), suffix : NONCOLOR stands for noncolor renderpass, ortho - for orthographic projection meshes (all w=1).
+
+0_s01rp00_fb00_0xf432ee0d_id0392_NONCOLOR.nr
+
+Note: NR plugin is very slow with ORTHO meshes, so if you really not need menu elements, shadows, etc, remove those files after rip or through config switches.
+
+GLTF2.0 output. How to select texture.
+
+When ripped with bSingleGltf = true. Select mesh. Remember its id. Open "glTF variands" pad, select texture variant started with the same id from list, press "Display variant". Press "Assign To Variant" if proper texture selected. Proper UVs selected as always in UV tab.
+
+
+Every material in variants list is a single texture ( diffuse/ normal / ambient ...) - these materials should be combined in real material.
+
+
+https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html
+
+
+Bluestack note:
+
+Bluestacks does not work with Vulkan API. Only if game output is Vulkan! (i.e. Children of the Light). Use OpenGL output with OpenGL ripper.
+
+
+
+Also check rip notes and videos.
+
+https://www.patreon.com/posts/surge-2-rip-140657460
+
+标签
+展开
+3d
+
+Baldur Gate 3
+
+Detroit: Become Human
+
+Nox
+
+RPCS3
+
+Ryujinx
+
+Yuzu
+
+Zelda
+
+blender
+
+direct3d
+
+directx
+
+farming simulator
+
+lime3ds
+
+mesh extractor
+
+ninjaripper
+
+opengl
+
+rdr2
+
+ripper
+
+shader
+
+suyu
+
+tracer
+
+vulkan
+
+此帖已关闭留言功能。
+
+
+22
+
+
+阅读您喜爱创作者的更多内容。
+
+打开应用
+
+相关帖子
+
+
+
+VulkanRipper 1.9. Projection matrix in One Click
+VulkanRipper 1.9 brings possibility to get projection matrix candidates for most Vulkan/DirectX games analyzing meshes. After performing th…
+2025年12月19日
+
+
+RPCS3 rip tutorial. GLTF2 output
+Today, for educational purposes, we will rip the game Drakengard 3 from PS3. First, lets rip the game in preshader (aka t-pose/local space) …
+2025年12月3日
+
+
+已锁定
+
+How to automatically link color and normal map texture when ripping
+7月18日
+
+
+YouTube
+
+Ripping Nintendo Wii U games (CEMU)
+2024年11月8日
+
+2
+
+热门帖子
+
+
+
+VulkanRipper software & manual
+Note 1: You should understand the basics of 3D graphics and be able to use you favorite 3D editor Note 2: VulkanRipper only saves the data t…
+9月14日
+
+22
+
+
+YouTube
+
+Dolphin emulator games rip
+5月22日
+
+6
+
+1
+
+
+Gallery. Vulkan/OpenGL/DirectX
+How many games use Vulkan/OpenGL/DirectX API? Vulkan: ~200 https://www.pcgamingwiki.com/wiki/List_of_Vulkan_games OpenGL: ~1498 https://www.…
+1月4日
+
+8
+
+
+Free VulkanRipper DirectX 64-bit version
+https://discord.com/invite/PTk4gWVqNs this ripper is absolete, use version 2.x instead
+2025年12月16日
+
+7
+
+
+
+
 https://zhuanlan.zhihu.com/p/35002943
 https://blog.csdn.net/qq_37660755/article/details/84701067
